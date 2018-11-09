@@ -12,12 +12,6 @@ const int G = 6; // Button 5
 const int A = 7; // Button 6
 const int B = 8; // Button 7
 
-// Modulation memory
-int counter = 0;
-bool isRecording = false;
-bool isPlaying = false;
-bool isReset = false;
-
 // Modulation pins
 const int RECORD_PIN = 10;
 const int RESET_PIN = 11;
@@ -26,6 +20,12 @@ const int STOP_PIN = 13;
 
 // Indicator pin
 const int LED_PIN = A0;
+
+// Modulation memory
+int counter = 0;
+bool is_recording = false;
+bool is_playing = false;
+bool is_reset = false;
 
 // Melody size and note duration
 const int melody_size = 200;
@@ -63,8 +63,8 @@ void loop() {
   if (digitalRead(RECORD_PIN) == LOW) {
     Serial.println("Recording started");
     counter = 0;
-    isRecording = true;
-    isPlaying = false;
+    is_recording = true;
+    is_playing = false;
     delay(200);
     analogWrite(LED_PIN, 1023); // Turn on LED
   }
@@ -72,25 +72,25 @@ void loop() {
   else if (digitalRead(RESET_PIN) == LOW) {
     Serial.println("Reset started");
     counter = 0;
-    isPlaying = false;
-    isRecording = false;
-    isReset = true;
+    is_playing = false;
+    is_recording = false;
+    is_reset = true;
     delay(200);
     analogWrite(LED_PIN, 1023); // Turn on LED
   }
   // Play button pressed while not playing
-  else if (digitalRead(LOAD_PIN) == LOW && isPlaying == false) {
+  else if (digitalRead(LOAD_PIN) == LOW && is_playing == false) {
     Serial.println("Playing started");
-    isPlaying = true;
-    isRecording = false;
+    is_playing = true;
+    is_recording = false;
     delay(200);
     analogWrite(LED_PIN, 1023); // Turn on LED
   }
   // Play button pressed while playing
-  else if (digitalRead(LOAD_PIN) == LOW && isPlaying == true) {
+  else if (digitalRead(LOAD_PIN) == LOW && is_playing == true) {
     Serial.println("Playing pauzed");
-    isPlaying = false; 
-    isRecording = false;
+    is_playing = false; 
+    is_recording = false;
     delay(200);
     analogWrite(LED_PIN, 0); // Turn off LED
   }
@@ -98,7 +98,7 @@ void loop() {
   else if (digitalRead(STOP_PIN) == LOW) {
     Serial.println("Playing stopped");
     counter = 0;
-    isPlaying = false;
+    is_playing = false;
     delay(200);
     analogWrite(LED_PIN, 0); // Turn off LED
   }
@@ -107,17 +107,17 @@ void loop() {
 
   
 void event_handler() {
-  if (isReset == true) {
+  if (is_reset == true) {
     melody[counter] = N_REST;
     counter++;
     if (counter == melody_size - 1) {
       Serial.println("Reset finished");
-      isReset = false;
+      is_reset = false;
       counter = 0;
       analogWrite(LED_PIN, 0); // Turn off LED
     }
   }
-  if (isRecording == true) {
+  if (is_recording == true) {
     if (digitalRead(C) == LOW) {
       tone(BUZZER_PIN, c[0], duration);
       melody[counter] = N_C5;
@@ -158,13 +158,13 @@ void event_handler() {
     delay(duration);
     if (counter == melody_size - 1) {
       Serial.println("Recording stopped");
-      isRecording = false;
+      is_recording = false;
       counter = 0;
       analogWrite(LED_PIN, 0); // Turn off LED
     }
     counter++;
   }
-  if (isPlaying == true) {
+  if (is_playing == true) {
     tone(BUZZER_PIN, melody[counter], duration);
     switch (melody[counter]) {
       case N_C5:
@@ -192,7 +192,7 @@ void event_handler() {
     delay(50);
     if (counter == melody_size - 1) {
       // uncomment this to have no loop
-      //isPlaying = false;
+      //is_playing = false;
       Serial.println("Playing repeat");
       counter = 0;
     }
