@@ -107,6 +107,7 @@ void loop() {
 
   
 void event_handler() {
+  // Execute when program is in the reset state
   if (is_reset == true) {
     melody[counter] = N_REST;
     counter++;
@@ -117,6 +118,7 @@ void event_handler() {
       analogWrite(LED_PIN, 0); // Turn off LED
     }
   }
+  // Execute when the program is in the recording state
   if (is_recording == true) {
     if (digitalRead(C) == LOW) {
       tone(BUZZER_PIN, c[0], duration);
@@ -164,6 +166,7 @@ void event_handler() {
     }
     counter++;
   }
+  // Execute when the program is in the play state
   if (is_playing == true) {
     tone(BUZZER_PIN, melody[counter], duration);
     switch (melody[counter]) {
