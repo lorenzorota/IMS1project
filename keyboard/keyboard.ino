@@ -27,7 +27,12 @@ const int STOP_PIN = 13;
 // Indicator pin
 const int LED_PIN = A0;
 
-int melody[100] = {N_REST}; // Initialize empty melody
+// Melody size and note duration
+const int melody_size = 200;
+int duration(50); // Every note lasts 50 milliseconds.
+
+// Melody and individual notes arrays
+int melody[melody_size] = {N_REST}; // Initialize empty melody
 int c[] = {N_C5}; // Plays C Note
 int d[] = {N_D5}; // Plays D Note
 int e[] = {N_E5}; // Plays E Note
@@ -35,8 +40,6 @@ int f[] = {N_F5}; // Plays F Note
 int g[] = {N_G5}; // Plays G Note
 int a[] = {N_A5}; // Plays A Note
 int b[] = {N_B5}; // Plays B Note
-
-int duration(50); // Every note lasts 50 milliseconds.
 
 void setup() {
   Serial.begin (9600);
@@ -107,7 +110,7 @@ void event_handler() {
   if (isReset == true) {
     melody[counter] = N_REST;
     counter++;
-    if (counter == 99) {
+    if (counter == melody_size - 1) {
       Serial.println("Reset finished");
       isReset = false;
       counter = 0;
@@ -153,7 +156,7 @@ void event_handler() {
       melody[counter] = N_REST;
     }
     delay(duration);
-    if (counter == 99) {
+    if (counter == melody_size - 1) {
       Serial.println("Recording stopped");
       isRecording = false;
       counter = 0;
@@ -187,7 +190,7 @@ void event_handler() {
         break;
     }
     delay(50);
-    if (counter == 99) {
+    if (counter == melody_size - 1) {
       // uncomment this to have no loop
       //isPlaying = false;
       Serial.println("Playing repeat");
